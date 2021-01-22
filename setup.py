@@ -11,14 +11,19 @@ setup(
     download_url='https://github.com/jfuruness/lib_utils.git',
     keywords=['Furuness', 'Utils', 'Wrapper', 'ETL', 'Helper Functions'],
     install_requires=[
-    ],
+            "bs4",
+            "multiprocessing_logging",
+            "pathos",
+            "psutil",
+            "pytz",
+            "requests",
+        ],
     classifiers=[
         'Environment :: Console',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python :: 3'],
-    entry_points={
-        'console_scripts': 'lib_utils = lib_utils.__main__:main'},
+    entry_points={},
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
 )

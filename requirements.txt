@@ -1,0 +1,6 @@
+bs4
+multiprocessing_logging
+pathos
+psutil
+pytz
+requests

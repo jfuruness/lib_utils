@@ -37,6 +37,49 @@ import shutil
 from psutil import process_iter
 from signal import SIGTERM
 
+from datetime import datetime
+import logging
+import os
+
+import multiprocessing_logging
+
+def config_logging(level=logging.INFO, section=None, reconfigure=False):
+    """Configures logging to log to a file and screen"""
+
+    assert section is not None, "Must specify section"
+
+    if len(logging.root.handlers) != 2 or reconfigure:
+        if reconfigure:
+            # Must remove handlers here, or else it will leave them open
+            for handler in logging.root.handlers[:]:
+                handler.close()
+                logging.root.removeHandler(handler)
+
+        # Makes log path and returns it
+        path = _get_log_path(section)
+        logging.root.handlers = []
+        logging.basicConfig(level=level,
+                            format='%(asctime)s-%(levelname)s: %(message)s',
+                            handlers=[logging.FileHandler(path),
+                                      logging.StreamHandler()])
+
+        logging.captureWarnings(True)
+        multiprocessing_logging.install_mp_handler()
+        logging.debug("initialized logger")
+
+
+def _get_log_path(section):
+    fname = f"{section}_{datetime.now().strftime('%Y_%m_%d')}.log"
+    log_dir = f"/var/log/{section}/"
+    if not os.path.exists(log_dir):
+        try:
+            os.makedirs(log_dir)
+        except PermissionError as e:
+            print("Permission error creating file, needs sudo permissions")
+            run_cmds([f"sudo mkdir {log_dir}", f"sudo chmod -R 777 {log_dir}"])
+    return os.path.join(log_dir, fname)
+
+
 
 # This decorator deletes paths before and after func is called
 def delete_files(files=[]):

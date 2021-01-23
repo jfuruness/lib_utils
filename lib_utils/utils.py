@@ -134,30 +134,12 @@ def low_overhead_log(msg: str, level: int):
         print(msg)
 
 
-def write_to_stdout(msg: str, log_level: int, flush=True):
+def write_to_stdout(msg: str):
     # Note that we need log level here, since if we are doing
     # This only in heaavily parallel processes
     # For which we do not want the overhead of logging
-    if log_level <= 20:
-        sys.stdout.write(msg)
-        sys.stdout.flush()
-
-# tqdm fails whenever large multiprocess operations take place
-# We don't want 60 print statements every time we run multiprocess things
-# So instead I wrote my own progress bar
-# This prints a progress bar, func should write to sys.stdout to incriment
-# This works well with multiprocessing for our applications
-# https://stackoverflow.com/a/3160819/8903959
-@contextmanager
-def progress_bar(msg: str, width: int):
-    log_level = logging.root.level
-    write_to_stdout(f"{datetime.now()}: {msg} X/{width}",
-                    log_level,
-                    flush=False)
-    write_to_stdout("[%s]" % (" " * width), log_level)
-    write_to_stdout("\b" * (width+1), log_level)
-    yield
-    write_to_stdout("]\n", log_level)
+    sys.stdout.write(f"{msg}\n")
+    sys.stdout.flush()
 
 
 def now():

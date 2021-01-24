@@ -100,6 +100,29 @@ def delete_files(files=[]):
         return function_that_runs_func
     return my_decorator
 
+# This decorator retries func if it fails
+def retry(err, tries=5, msg="", sleep=.1):
+    """This decorator deletes files before and after a function.
+    This is very useful for installation procedures.
+    """
+    def my_decorator(func):
+        @functools.wraps(func)
+        def function_that_runs_func(self, *args, **kwargs):
+            # Inside the decorator
+            e = None
+            # Number of tries
+            for _ in range(tries):
+                try:
+                    # Run the function
+                    return func(self, *args, **kwargs)
+                except err as e:
+                    time.sleep(sleep)
+                # Delete the files if they do exist
+            logging.error(msg)
+            raise e
+            assert False, "Should never reach here"
+        return function_that_runs_func
+    return my_decorator
 
 @contextmanager
 def Pool(threads: int, multiplier: int, name: str):

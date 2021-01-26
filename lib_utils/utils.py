@@ -102,6 +102,16 @@ def _get_log_path(section):
             run_cmds([f"sudo mkdir {log_dir}", f"sudo chmod -R 777 {log_dir}"])
     return os.path.join(log_dir, fname)
 
+def makedirs(path, remake=False):
+        try:
+            os.makedirs(path)
+        except PermissionError as e:
+            run_cmds([f"sudo mkdir {path}", f"sudo chmod -R 777 {path}"])
+        except FileExistsError:
+            if remake:
+                shutil.rmtree(path)
+                makedirs(path)
+
 
 
 # This decorator deletes paths before and after func is called
@@ -130,19 +140,19 @@ def retry(err, tries=5, msg="", sleep=.1):
     """
     def my_decorator(func):
         @functools.wraps(func)
-        def function_that_runs_func(self, *args, **kwargs):
+        def function_that_runs_func(*args, **kwargs):
             # Inside the decorator
-            e = None
+            f = None
             # Number of tries
             for _ in range(tries):
                 try:
                     # Run the function
-                    return func(self, *args, **kwargs)
-                except err as e:
+                    return func(*args, **kwargs)
+                except err as f:
                     time.sleep(sleep)
                 # Delete the files if they do exist
             logging.error(msg)
-            raise e
+            raise f
             assert False, "Should never reach here"
         return function_that_runs_func
     return my_decorator
@@ -215,53 +225,18 @@ def get_default_end() -> int:
                                                  microsecond=59
                                                  ).timestamp())
 
-
-def download_file(url: str,
-                  path: str,
-                  file_num=1,
-                  total_files=1,
-                  sleep_time=0,
-                  progress_bar=False):
+@retry(Exception, tries=2, msg="Failed download")
+def download_file(url: str, path: str):
     """Downloads a file from a url into a path."""
 
-    log_level = logging.root.level
-    if progress_bar:  # mrt_parser or multithreaded app running, disable log
-        logging.root.handlers.clear()
-        logging.shutdown()
-    low_overhead_log(f"Downloading\n  Path:{path}\n Link:{url}\n", log_level)
-    # This is to make sure that the network is not bombarded with requests
-    time.sleep(sleep_time)
-    retries = 10
-
-    while retries > 0:
-        try:
-            # Code for downloading files off of the internet
-            with urllib.request.urlopen(url, timeout=60)\
-                    as response, open(path, 'wb') as out_file:
-                # Copy the file into the specified file_path
-                shutil.copyfileobj(response, out_file)
-                low_overhead_log(f"{file_num} / {total_files} downloaded",
-                                 log_level)
-                if progress_bar:
-                    incriment_bar(log_level)
-                return
-        # If there is an error in the download this will be called
-        # And the download will be retried
-        except Exception as e:
-            retries -= 1
-            time.sleep(5)
-            if retries <= 0 or "No such file" in str(e):
-                logging.error(f"Failed download {url}\nDue to: {e}")
-                sys.exit(1)
-
-
-def incriment_bar(log_level: int):
-    # Needed here because mrt_parser can't log
-    if log_level <= 20:  # INFO
-        sys.stdout.write("#")
-        sys.stdout.flush()
-    else:
-        sys.stdout.flush()
+    logging.info(f"Downloading\n\tPath:{path}\n\tLink:{url}\n")
+    # Code for downloading files off of the internet
+    # long since forgetten the link sorry
+    with urllib.request.urlopen(url, timeout=60)\
+            as response, open(path, 'wb') as out_file:
+        # Copy the file into the specified file_path
+        shutil.copyfileobj(response, out_file)
+        logging.info(f"{file_num} / {total_files} downloaded")
 
 
 def delete_paths(paths):

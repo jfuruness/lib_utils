@@ -142,17 +142,18 @@ def retry(err, tries=5, msg="", sleep=.1):
         @functools.wraps(func)
         def function_that_runs_func(*args, **kwargs):
             # Inside the decorator
-            f = None
+            e = None
             # Number of tries
-            for _ in range(tries):
+            for i in range(tries):
                 try:
                     # Run the function
                     return func(*args, **kwargs)
                 except err as f:
                     time.sleep(sleep)
+                    e = f
                 # Delete the files if they do exist
             logging.error(msg)
-            raise f
+            raise e
             assert False, "Should never reach here"
         return function_that_runs_func
     return my_decorator
@@ -236,7 +237,6 @@ def download_file(url: str, path: str):
             as response, open(path, 'wb') as out_file:
         # Copy the file into the specified file_path
         shutil.copyfileobj(response, out_file)
-        logging.info(f"{file_num} / {total_files} downloaded")
 
 
 def delete_paths(paths):
@@ -266,7 +266,8 @@ def delete_paths(paths):
         except FileNotFoundError:
             logging.debug(f"File not found when deleting {path}")
         except PermissionError:
-            logging.warning(f"Permission error when deleting {path}")
+            logging.warning(f"Permission error when deleting {path}, retrying")
+            run_cmds(f"sudo rm -rf {path}")
 
 
 def clean_paths(paths):

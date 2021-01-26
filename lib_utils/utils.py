@@ -48,6 +48,29 @@ def config_logging(level=logging.INFO, section=None, reconfigure=False):
 
     assert section is not None, "Must specify section"
 
+    if len(logging.root.handlers) != 1 or reconfigure:
+        if reconfigure:
+            # Must remove handlers here, or else it will leave them open
+            for handler in logging.root.handlers[:]:
+                handler.close()
+                logging.root.removeHandler(handler)
+
+        # Makes log path and returns it
+        logging.root.handlers = []
+        logging.basicConfig(level=level,
+                            format='%(asctime)s-%(levelname)s: %(message)s',
+                            handlers=[logging.StreamHandler()])
+
+        logging.captureWarnings(True)
+        multiprocessing_logging.install_mp_handler()
+        logging.debug("initialized logger")
+
+
+def config_logging_file(level=logging.INFO, section=None, reconfigure=False):
+    """Configures logging to log to a file and screen"""
+
+    assert section is not None, "Must specify section"
+
     if len(logging.root.handlers) != 2 or reconfigure:
         if reconfigure:
             # Must remove handlers here, or else it will leave them open
@@ -125,7 +148,7 @@ def retry(err, tries=5, msg="", sleep=.1):
     return my_decorator
 
 @contextmanager
-def Pool(threads: int, multiplier: int, name: str):
+def Pool(threads=None, multiplier=1, name="pool"):
     """Context manager for pathos ProcessingPool"""
 
     # Creates a pool with threads else cpu_count * multiplier

@@ -391,14 +391,14 @@ def get_lines_in_file(filename: str) -> int:
     return count + 1
 
 
-def run_cmds(cmds, timeout=None):
+def run_cmds(cmds, timeout=None, stdout=False):
 
     cmd = " && ".join(cmds) if isinstance(cmds, list) else cmds
 
     kwargs = {"shell": True}
 
     # If logging is greater than or equal to info
-    if logging.root.level >= 20:
+    if logging.root.level >= 20 and stdout is False:
         kwargs.update({"stdout": DEVNULL, "stderr": DEVNULL})
     if timeout is not None:
         kwargs["timeout"] = timeout

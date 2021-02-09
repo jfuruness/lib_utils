@@ -73,15 +73,6 @@ You can test the package if in development by moving/cd into the directory where
 (Note that you must have all dependencies installed first)
 ```python3 setup.py test```
 
-To test from pip install:
-```bash
-pip3 install wheel
-# janky but whatever. Done to install deps
-pip3 install lib_utils
-pip3 uninstall lib_utils
-pip3 install lib_utils --install-option test
-```
-
 ## Development/Contributing
 * [lib\_utils](#lib_utils)
 

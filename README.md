@@ -11,6 +11,8 @@ This package contains helper functions. Originally [this](https://github.com/jfu
 * [History](#history)
 * [Credits](#credits)
 * [Licence](#license)
+* [To do](#todo)
+
 
 ## Package Description
 * [lib\_utils](#lib_utils)
@@ -97,3 +99,10 @@ Credits to Drew Monroe and the UITS team for inspiring this library. Credits to 
 * [lib\_utils](#lib_utils)
 
 BSD License (see license file)
+
+## Todo
+* [lib\_utils](#lib_utils)
+
+Better unit tests. Oof.
+
+

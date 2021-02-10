@@ -23,3 +23,19 @@ def config_logging(level=logging.INFO):
 def write_to_stdout(msg: str):
     sys.stdout.write(f"{msg}\n")
     sys.stdout.flush()
+
+# This decorator prints exception upon err
+def print_err(err, msg="{}"):
+    """This decorator deletes files before and after a function.
+    This is very useful for installation procedures.
+    """
+    def my_decorator(func):
+        @functools.wraps(func)
+        def function_that_runs_func(*args, **kwargs):
+            try:
+                # Run the function
+                return func(*args, **kwargs)
+            except err as e:
+                logging.error(msg.format(e))
+        return function_that_runs_func
+    return my_decorator

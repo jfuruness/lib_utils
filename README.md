@@ -33,6 +33,7 @@ Functions:
 * print functions:
     * config_logging: configures logging for printing
     * write_to_stdout: writes to standard out w/\n and flushes buffer
+    * print_err: (decorator) prints msg w/exception upon func failure
 * helper functions
     * retry: (decorator) retries a function if it errors with error X Y times, sleeping z seconds inbetween each time
     * Pool: (context manager) creates a pathos processing pool that closes automatically
@@ -87,6 +88,7 @@ You can test the package if in development by moving/cd into the directory where
 
 ## History
 * [lib\_utils](#lib_utils)
+* 0.1.3 Added print_err func
 * 0.1.2 Minor edits to readme and files
 * 0.1.0 First production release
 

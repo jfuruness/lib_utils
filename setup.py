@@ -4,7 +4,7 @@ import sys
 setup(
     name='lib_utils',
     packages=find_packages(),
-    version='0.1.3',
+    version='0.1.4',
     author='Justin Furuness',
     author_email='jfuruness@gmail.com',
     url='https://github.com/jfuruness/lib_utils.git',

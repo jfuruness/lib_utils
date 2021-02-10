@@ -88,7 +88,7 @@ You can test the package if in development by moving/cd into the directory where
 
 ## History
 * [lib\_utils](#lib_utils)
-* 0.1.3 Added print_err func
+* 0.1.4 Added print_err func
 * 0.1.2 Minor edits to readme and files
 * 0.1.0 First production release
 

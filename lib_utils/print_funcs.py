@@ -1,5 +1,6 @@
 """Contains useful functions relating to printing"""
 
+import functools
 import logging
 import sys
 

@@ -7,8 +7,9 @@ from multiprocessing import cpu_count
 from subprocess import check_call, DEVNULL
 import time
 
+from bs4 import BeautifulSoup as Soup
 from pathos.multiprocessing import ProcessingPool
-
+import requests
 
 # This decorator retries func if it fails
 def retry(err, tries=5, msg="", sleep=.1):
@@ -64,3 +65,15 @@ def run_cmds(cmds, timeout=None, stdout=False):
 
     logging.debug(f"Running: {cmd}")
     check_call(cmd, **kwargs)
+
+def get_tags(url: str, tag: str):
+    """Gets the html of given url and returns a list of tags"""
+
+    response = requests.get(url)
+    # Raises an exception if there was an error
+    response.raise_for_status()
+    # Get all tags within the beautiful soup from the html and return them
+    tags = [x for x in Soup(response.text, 'html.parser').select(tag)]
+    response.close()
+
+    return tags

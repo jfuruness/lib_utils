@@ -11,8 +11,10 @@ setup(
     download_url='https://github.com/jfuruness/lib_utils.git',
     keywords=['Furuness', 'Utils', 'Wrapper', 'ETL', 'Helper Functions'],
     install_requires=[
+            "bs4",
             "multiprocessing_logging",
             "pathos",
+            "requests",
         ],
     classifiers=[
         'Environment :: Console',

@@ -38,6 +38,7 @@ Functions:
     * retry: (decorator) retries a function if it errors with error X Y times, sleeping z seconds inbetween each time
     * Pool: (context manager) creates a pathos processing pool that closes automatically
     * run_cmds: Runs bash commands properly. Can suppress stdout.
+    * get_tags: Gets all tags of a given url
 
 ```python
 from lib_utils import file_funcs, helper_funcs, print_funcs
@@ -88,6 +89,7 @@ You can test the package if in development by moving/cd into the directory where
 
 ## History
 * [lib\_utils](#lib_utils)
+* 0.1.6 Added get_tags
 * 0.1.5 fixed an error in the print_err func
 * 0.1.4 Added print_err func
 * 0.1.2 Minor edits to readme and files

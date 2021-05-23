@@ -42,13 +42,13 @@ def makedirs(path, remake=False):
 
 
 @retry(Exception, tries=2, msg="Failed download")
-def download_file(url: str, path: str):
+def download_file(url: str, path: str, timeout=60):
     """Downloads a file from a url into a path."""
 
     logging.info(f"Downloading\n\tPath:{path}\n\tLink:{url}\n")
     # Code for downloading files off of the internet
     # long since forgetten the link sorry
-    with urllib.request.urlopen(url, timeout=60)\
+    with urllib.request.urlopen(url, timeout=timeout)\
             as response, open(path, 'wb') as out_file:
         # Copy the file into the specified file_path
         shutil.copyfileobj(response, out_file)

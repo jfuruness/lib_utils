@@ -34,7 +34,7 @@ def makedirs(path, remake=False):
     try:
         os.makedirs(path)
     except PermissionError:
-        run_cmds([f"sudo mkdir {path}", f"sudo chmod -R 777 {path}"])
+        run_cmds([f"sudo mkdir {path}", f"sudo chmown -R $USER:$USER {path}"])
     except FileExistsError:
         if remake:
             shutil.rmtree(path)

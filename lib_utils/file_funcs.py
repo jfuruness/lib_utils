@@ -33,10 +33,26 @@ def delete_files(files=[]):
 def makedirs(path, remake=False):
     try:
         os.makedirs(path)
-    except PermissionError:
-        run_cmds([f"sudo mkdir {path}", f"sudo chmown -R $USER:$USER {path}"])
+    except PermissionError as e:
+        # We don't always want to attempt sudo. Ex: Pytest
+        # https://stackoverflow.com/a/58866220
+        if "PYTEST_CURRENT_TEST" in os.environ:
+            raise e
+        else:
+            logging.debug(f"PermissionError when creating {path}. "
+                          "Attempting with sudo")
+            cmd = f"sudo mkdir {path} && sudo chmown -R $USER:$USER {path}"
+ 
+            try:
+                run_cmds(cmd)
+            # Sudo must have failed, needs permissions
+            except subprocess.CalledProcessError as subprocess_exc:
+                logging.error("Command {cmd} failed with {subprocess_exc}")
+                raise e
     except FileExistsError:
+        logging.debug(f"Path already exists: {path}")
         if remake:
+            logging.debug(f"Recreating path: {path}")
             shutil.rmtree(path)
             makedirs(path)
 
@@ -57,23 +73,14 @@ def download_file(url: str, path: str, timeout=60):
 def delete_paths(paths):
     """Removes directory if directory, or removes path if path"""
 
-    if not paths:
-        paths = []
     # If a single path is passed in, convert it to a list
     if not isinstance(paths, list):
         paths = [paths]
+
     for path in paths:
         try:
             remove_func = os.remove if os.path.isfile(path) else shutil.rmtree
             remove_func(path)
-            # If the path is a file
-            if os.path.isfile(path):
-                # Delete the file
-                os.remove(path)
-            # If the path is a directory
-            if os.path.isdir(path):
-                # rm -rf the directory
-                shutil.rmtree(path)
         # Just in case we always delete everything at the end of a run
         # So some files may not exist anymore
         except AttributeError:

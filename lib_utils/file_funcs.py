@@ -39,9 +39,9 @@ def makedirs(path, remake=False):
         if "PYTEST_CURRENT_TEST" in os.environ:
             raise e
         else:
-            logging.debug(f"PermissionError when creating {path}. "
-                          "Attempting with sudo")
-            cmd = f"sudo mkdir {path} && sudo chmown -R $USER:$USER {path}"
+            logging.warning(f"PermissionError when creating {path}. "
+                            "Attempting with sudo")
+            cmd = f"sudo mkdir {path} && sudo chown -R $USER:$USER {path}"
  
             try:
                 run_cmds(cmd)

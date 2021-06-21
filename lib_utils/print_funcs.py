@@ -10,11 +10,20 @@ import multiprocessing_logging
 
 from .file_funcs import makedirs
 
+logging_set = False
 
-def config_logging(level=logging.INFO, section="main"):
-    """Configures logging to log to a file and screen"""
+def config_logging(level=logging.INFO, section="main", mp=False):
+    """Configures logging to log to a file and screen
 
-    if len(logging.root.handlers) == 0:
+    mp stands for multiprocessing, didn't want to override that package
+    """
+
+    # NOTE: it turns out that subprocess calls, pytest, etc
+    # Seems to automatically add handlers, even if they are not set
+    # The only real way to check if we have handlers set
+    # Is to check if we have specific handlers that are set, or a global
+    global logging_set
+    if not logging_set:
 
         path = _get_log_path(section)
 
@@ -25,8 +34,17 @@ def config_logging(level=logging.INFO, section="main"):
                                       logging.FileHandler(path)])
 
         logging.captureWarnings(True)
-        multiprocessing_logging.install_mp_handler()
+
+        # If you need multiprocessing install this
+        # Otherwise it slows it down, and additionally doesn't flush
+        # after every call, which ruins logging unit tests
+        # . See: https://github.com/jruere/
+        # multiprocessing-logging/issues/51#issue-925800880
+        if mp:
+            multiprocessing_logging.install_mp_handler()
         logging.debug("initialized logger")
+        logging_set = True
+        return path
 
 
 def _get_log_path(section):
@@ -41,6 +59,7 @@ def _get_log_path(section):
 
 
 def write_to_stdout(msg: str):
+    logging.warning("There are no unit tests for this function")
     sys.stdout.write(f"{msg}\n")
     sys.stdout.flush()
 
@@ -54,6 +73,7 @@ def print_err(err, msg="{}"):
         @functools.wraps(func)
         def function_that_runs_func(*args, **kwargs):
             try:
+                logging.warning("There are no unit tests for this utils func")
                 # Run the function
                 return func(*args, **kwargs)
             except err as e:

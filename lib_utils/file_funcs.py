@@ -17,12 +17,12 @@ def delete_files(files=[]):
     """
     def my_decorator(func):
         @functools.wraps(func)
-        def function_that_runs_func(self, *args, **kwargs):
+        def function_that_runs_func(*args, **kwargs):
             # Inside the decorator
             # Delete the files - prob don't exist yet
             delete_paths(files)
             # Run the function
-            stuff = func(self, *args, **kwargs)
+            stuff = func(*args, **kwargs)
             # Delete the files if they do exist
             delete_paths(files)
             return stuff
@@ -61,6 +61,7 @@ def makedirs(path, remake=False):
 def download_file(url: str, path: str, timeout=60):
     """Downloads a file from a url into a path."""
 
+    logging.warning("There are no unit tests for this func")
     logging.info(f"Downloading\n\tPath:{path}\n\tLink:{url}\n")
     # Code for downloading files off of the internet
     # long since forgetten the link sorry
@@ -95,6 +96,7 @@ def delete_paths(paths):
 def clean_paths(paths):
     """If path exists remove it, else create it"""
 
+    logging.warning("No unit test for this function")
     # If a single path is passed in, convert it to a list
     if not isinstance(paths, list):
         paths = [paths]

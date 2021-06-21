@@ -27,6 +27,7 @@ def config_logging(level=logging.INFO, section="main", mp=False):
 
         path = _get_log_path(section)
 
+        # without this it doesn't work
         logging.root.handlers = []
         logging.basicConfig(level=level,
                             format='%(asctime)s-%(levelname)s: %(message)s',

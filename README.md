@@ -60,11 +60,19 @@ pip3 install lib_utils
 This will install the package and all of it's python dependencies.
 
 If you want to install the project for development:
+
+After activating your python environment:
+
 ```bash
 git clone https://github.com/jfuruness/lib_utils.git
 cd lib_utils
-pip3 install wheel
-pip3 install -e .
+python3 setup.py develop
+# Section for default logging
+sudo mkdir /var/log/main
+sudo chown -R $USER:$USER /var/log/main
+# Section for test logging
+sudo mkdir /var/log/test
+sudo chown -R $USER:$USER /var/log/test
 ```
 
 To test the development package: [Testing](#testing)

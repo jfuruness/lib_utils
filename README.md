@@ -97,7 +97,8 @@ You can test the package if in development by moving/cd into the directory where
 
 ## History
 * [lib\_utils](#lib_utils)
-* 0.1.6 Added get_tags
+* 0.1.7 Added more unit tests, fixed multiprocess logging
+* 0.1.6 Added get_tags, added
 * 0.1.5 fixed an error in the print_err func
 * 0.1.4 Added print_err func
 * 0.1.2 Minor edits to readme and files

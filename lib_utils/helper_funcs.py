@@ -22,7 +22,6 @@ def retry(err, tries=5, msg="", fail_func=lambda: time.sleep(.1)):
             # Number of tries
             for _ in range(tries):
                 try:
-                    logging.warning("No unit tests for this")
                     # Run the function
                     return func(*args, **kwargs)
                 except err as exc:
@@ -38,7 +37,6 @@ def retry(err, tries=5, msg="", fail_func=lambda: time.sleep(.1)):
 def Pool(threads=None, multiplier=1):
     """Context manager for pathos ProcessingPool"""
 
-    logging.warning("There are no unit tests for this function")
     # Creates a pool with threads else cpu_count * multiplier
     p = ProcessingPool(threads if threads else cpu_count() * multiplier)
     yield p
@@ -67,7 +65,6 @@ def run_cmds(cmds, timeout=None, stdout=False):
 def get_tags(url: str, tag: str, timeout=30):
     """Gets the html of given url and returns a list of tags"""
 
-    logging.warning("There are no unit tests for this utils func")
     response = requests.get(url, timeout=timeout)
     # Raises an exception if there was an error
     response.raise_for_status()

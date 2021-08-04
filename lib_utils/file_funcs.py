@@ -1,5 +1,7 @@
 """Contains useful functions relating to files"""
 
+from contextlib import contextmanager
+from datetime import datetime
 import functools
 import logging
 import os
@@ -29,6 +31,16 @@ def delete_files(files=[]):
         return function_that_runs_func
     return my_decorator
 
+@contextmanager
+def temp_path(path=None, path_append=None):
+
+    if path is None:
+        path = f"/tmp/{datetime.now()}".replace(" ", "_")
+    if path_append:
+        path += path_append
+    delete_paths(path)
+    yield path
+    delete_paths(path)
 
 def makedirs(path, remake=False):
     try:
@@ -61,7 +73,6 @@ def makedirs(path, remake=False):
 def download_file(url: str, path: str, timeout=60):
     """Downloads a file from a url into a path."""
 
-    logging.warning("There are no unit tests for this func")
     logging.info(f"Downloading\n\tPath:{path}\n\tLink:{url}\n")
     # Code for downloading files off of the internet
     # long since forgetten the link sorry
@@ -96,7 +107,6 @@ def delete_paths(paths):
 def clean_paths(paths):
     """If path exists remove it, else create it"""
 
-    logging.warning("No unit test for this function")
     # If a single path is passed in, convert it to a list
     if not isinstance(paths, list):
         paths = [paths]

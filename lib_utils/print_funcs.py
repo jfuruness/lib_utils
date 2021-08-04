@@ -60,7 +60,6 @@ def _get_log_path(section):
 
 
 def write_to_stdout(msg: str):
-    logging.warning("There are no unit tests for this function")
     sys.stdout.write(f"{msg}\n")
     sys.stdout.flush()
 
@@ -74,7 +73,6 @@ def print_err(err, msg="{}"):
         @functools.wraps(func)
         def function_that_runs_func(*args, **kwargs):
             try:
-                logging.warning("There are no unit tests for this utils func")
                 # Run the function
                 return func(*args, **kwargs)
             except err as e:

@@ -5,9 +5,9 @@ from datetime import datetime
 import functools
 import logging
 import os
+import subprocess
 
-import urllib
-import shutil
+import requests
 
 from .helper_funcs import run_cmds, retry
 
@@ -70,16 +70,20 @@ def makedirs(path, remake=False):
 
 
 @retry(Exception, tries=2, msg="Failed download")
-def download_file(url: str, path: str, timeout=60):
+def download_file(url: str, path: str, timeout=60, verify=False):
     """Downloads a file from a url into a path."""
 
     logging.info(f"Downloading\n\tPath:{path}\n\tLink:{url}\n")
-    # Code for downloading files off of the internet
-    # long since forgetten the link sorry
-    with urllib.request.urlopen(url, timeout=timeout)\
-            as response, open(path, 'wb') as out_file:
-        # Copy the file into the specified file_path
-        shutil.copyfileobj(response, out_file)
+    
+    # https://stackoverflow.com/a/39217788/8903959
+    # This works best for specifically long files
+    # Urlretrieve is deprecated:
+    # https://docs.python.org/3.5/library/urllib.request.html#legacy-interface
+    # Send a get request to URL
+    with requests.get(url, stream=True, verify=verify, timeout=timeout) as r:
+        # open the file and copy to it
+        with open(path, 'wb') as f:
+            shutil.copyfileobj(r.raw, f)
 
 
 def delete_paths(paths):

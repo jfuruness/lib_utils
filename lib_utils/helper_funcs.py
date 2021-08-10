@@ -37,11 +37,11 @@ def retry(err, tries=5, msg="", fail_func=lambda: time.sleep(.1)):
 
 
 @contextmanager
-def Pool(threads=None, multiplier=1):
+def Pool(processes=cpu_count()):
     """Context manager for pathos ProcessingPool"""
 
     # Creates a pool with threads else cpu_count * multiplier
-    p = ProcessingPool(threads if threads else cpu_count() * multiplier)
+    p = ProcessingPool(processes)
     yield p
     # Need to clear due to:
     # https://github.com/uqfoundation/pathos/issues/111

@@ -77,3 +77,13 @@ def get_tags(url: str, tag: str, timeout=30, verify=False):
     response.close()
 
     return tags
+
+def get_hrefs(url: str, tag="a", timeout=30, verify=False):
+    """Returns all hrefs that have an a tag at a given url"""
+
+    hrefs = []
+    for x in get_tags(url, tag, timeout=timeout, verify=verify):
+        # Get doesn't work normally
+        if x.get("href") is not None:
+            hrefs.append(x["href"])
+    return hrefs

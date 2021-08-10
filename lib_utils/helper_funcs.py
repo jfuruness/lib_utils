@@ -11,6 +11,9 @@ from bs4 import BeautifulSoup as Soup
 from pathos.multiprocessing import ProcessingPool
 import requests
 
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 def retry(err, tries=5, msg="", fail_func=lambda: time.sleep(.1)):
     """This decorator retries a func with the added fail func"""
 
@@ -62,10 +65,11 @@ def run_cmds(cmds, timeout=None, stdout=False):
     logging.debug(f"Running: {cmd}")
     check_call(cmd, **kwargs)
 
-def get_tags(url: str, tag: str, timeout=30):
+def get_tags(url: str, tag: str, timeout=30, verify=False):
     """Gets the html of given url and returns a list of tags"""
 
-    response = requests.get(url, timeout=timeout)
+    # Verify verifies the SSL. Most website I scrape from have outdated certs
+    response = requests.get(url, timeout=timeout, verify=verify)
     # Raises an exception if there was an error
     response.raise_for_status()
     # Get all tags within the beautiful soup from the html and return them

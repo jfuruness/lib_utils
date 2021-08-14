@@ -10,6 +10,7 @@ import time
 from bs4 import BeautifulSoup as Soup
 from pathos.multiprocessing import ProcessingPool
 import requests
+from tqdm import tqdm
 
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -37,17 +38,26 @@ def retry(err, tries=5, msg="", fail_func=lambda: time.sleep(.1)):
 
 
 @contextmanager
-def Pool(processes=cpu_count()):
+def Pool(cpus=cpu_count()):
     """Context manager for pathos ProcessingPool"""
 
-    # Creates a pool with threads else cpu_count * multiplier
-    p = ProcessingPool(processes)
+    # Creates a pool with processes
+    p = ProcessingPool(cpus)
     yield p
     # Need to clear due to:
     # https://github.com/uqfoundation/pathos/issues/111
     p.close()
     p.join()
     p.clear()
+
+
+def mp_call(func, args, desc, cpus=cpu_count()):
+    """Makes a multiprocess call to a function with a progress bar"""
+
+    
+    with Pool(cpus=cpus) as p:
+        # Imap is an ordered map that returns an iterator
+        list(tqdm(p.imap(func, *args), total=len(args[0]), desc=desc))
 
 
 def run_cmds(cmds, timeout=None, stdout=False):

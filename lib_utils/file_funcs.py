@@ -5,9 +5,11 @@ from datetime import datetime
 import functools
 import logging
 import os
+import shutil
 import subprocess
 
 import requests
+
 
 from .helper_funcs import run_cmds, retry
 
@@ -73,7 +75,7 @@ def makedirs(path, remake=False):
 def download_file(url: str, path: str, timeout=60, verify=False):
     """Downloads a file from a url into a path."""
 
-    logging.info(f"Downloading\n\tPath:{path}\n\tLink:{url}\n")
+    # NOTE: NO LOGGING!!! really slows down multiprocessing
     
     # https://stackoverflow.com/a/39217788/8903959
     # This works best for specifically long files

@@ -1,6 +1,7 @@
 """Contains useful functions relating to files"""
 
 from contextlib import contextmanager
+import csv
 from datetime import datetime
 import functools
 import logging
@@ -45,6 +46,20 @@ def temp_path(path=None, path_append=None):
     delete_paths(path)
 
 def makedirs(path, remake=False):
+    # Get all subpaths
+    all_paths = []
+    for i in range(len(path.split("/"))):
+        subpath = "/".join(path.split("/")[:i + 1])
+        if path not in ["/", "", " "]:
+            all_paths.append(subpath)
+
+    # Make all subpaths if they do not exist
+    for path in all_paths[:-1]:
+        makedir(path)
+    # Make final path, and remake if desired
+    makedir(all_paths[-1], remake=remake)
+
+def makedir(path, remake=False):
     try:
         os.makedirs(path)
     except PermissionError as e:
@@ -55,7 +70,8 @@ def makedirs(path, remake=False):
         else:
             logging.warning(f"PermissionError when creating {path}. "
                             "Attempting with sudo")
-            cmd = f"sudo mkdir {path} && sudo chown -R $USER:$USER {path}"
+            # -p creates parent dirs. Thanks Tony!
+            cmd = f"sudo mkdir -p {path} && sudo chown -R $USER:$USER {path}"
  
             try:
                 run_cmds(cmd)
@@ -119,3 +135,16 @@ def clean_paths(paths):
     delete_paths(paths)
     for path in paths:
         makedirs(path)
+
+def write_dicts_to_tsv(list_of_dicts, path):
+    """Writes a list of dicts to TSV
+
+    Note - column ordering = column ordering in the first dict
+    """
+
+    logging.debug(f"Writing rows to {path}")
+    with open(path, mode="w+") as f:
+        cols = list(list_of_dicts[0].keys())
+        writer = csv.DictWriter(f, fieldnames=cols, delimiter="\t")
+        writer.writeheader()
+        writer.writerows(list_of_dicts)

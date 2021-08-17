@@ -50,7 +50,7 @@ def makedirs(path, remake=False):
     all_paths = []
     for i in range(len(path.split("/"))):
         subpath = "/".join(path.split("/")[:i + 1])
-        if path not in ["/", "", " "]:
+        if subpath not in ["/", "", " "]:
             all_paths.append(subpath)
 
     # Make all subpaths if they do not exist
@@ -83,12 +83,15 @@ def makedir(path, remake=False):
         logging.debug(f"Path already exists: {path}")
         if remake:
             logging.debug(f"Recreating path: {path}")
-            shutil.rmtree(path)
-            makedirs(path)
+            try:
+                shutil.rmtree(path)
+            except PermissionError:
+                run_cmds("sudo rm -rf {path}")
+            makedir(path, remake=False)
 
 
 @retry(Exception, tries=2, msg="Failed download")
-def download_file(url: str, path: str, timeout=60, verify=False):
+def download_file(url: str, path: str, timeout=60, verify=False, err=False):
     """Downloads a file from a url into a path."""
 
     # NOTE: NO LOGGING!!! really slows down multiprocessing
@@ -99,9 +102,12 @@ def download_file(url: str, path: str, timeout=60, verify=False):
     # https://docs.python.org/3.5/library/urllib.request.html#legacy-interface
     # Send a get request to URL
     with requests.get(url, stream=True, verify=verify, timeout=timeout) as r:
-        # open the file and copy to it
-        with open(path, 'wb') as f:
-            shutil.copyfileobj(r.raw, f)
+        if r.status_code == 200:
+            # open the file and copy to it
+            with open(path, 'wb') as f:
+                shutil.copyfileobj(r.raw, f)
+        elif err:
+            r.raise_for_status()
 
 
 def delete_paths(paths):

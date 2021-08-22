@@ -106,8 +106,10 @@ def download_file(url: str, path: str, timeout=60, verify=False, err=False):
             # open the file and copy to it
             with open(path, 'wb') as f:
                 shutil.copyfileobj(r.raw, f)
-        elif err:
-            r.raise_for_status()
+        else:
+            logging.warning(f"{url} returned {r.status_code}")
+            if err:
+                r.raise_for_status()
 
 
 def delete_paths(paths):

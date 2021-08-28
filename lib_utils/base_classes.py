@@ -19,7 +19,7 @@ class Base:
         # Sets directory to download files to and write parsed files
         self._dir = os.path.join(kwargs.get("_dir", "/ssd/"),
                                  self.__class__.__name__,
-                                 self.dl_time.strftime("%Y.%m.%d.%s"))
+                                 self.dl_time.strftime("%Y.%m.%d.%H.%M.%S"))
         # Make self._dir
         makedirs(self._dir)#, remake=True)
         # Path to output file

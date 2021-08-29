@@ -2,3 +2,4 @@ bs4
 multiprocessing_logging
 pathos
 requests
+tqdm

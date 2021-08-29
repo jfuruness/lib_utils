@@ -15,6 +15,7 @@ setup(
             "multiprocessing_logging",
             "pathos",
             "requests",
+            "tqdm",
         ],
     classifiers=[
         'Environment :: Console',

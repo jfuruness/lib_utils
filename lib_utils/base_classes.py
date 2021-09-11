@@ -17,7 +17,7 @@ class Base:
         # Gets default download time if not otherwise set
         self.dl_time = kwargs.get("dl_time", self._default_dl_time())
         # Sets directory to download files to and write parsed files
-        self._dir = os.path.join(kwargs.get("_dir", "/ssd/"),
+        self._dir = os.path.join(kwargs.get("_dir", "/tmp/"),
                                  self.__class__.__name__,
                                  self.dl_time.strftime("%Y.%m.%d.%H.%M.%S"))
         # Make self._dir
@@ -65,10 +65,11 @@ class Base:
     def _default_dl_time(self):
         """Returns default DL time.
 
-        For most things, we download from 2 days ago
+        For most things, we download from 4 days ago
         And for collectors, time must be divisible by 4/8
         """
 
-        dl_time = datetime.utcnow() - timedelta(days=2)
+        # 7 days because sometimes caida takes a while to upload
+        dl_time = datetime.utcnow() - timedelta(days=7)
         return dl_time.replace(hour=0, minute=0, second=0, microsecond=0)
 

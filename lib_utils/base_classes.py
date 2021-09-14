@@ -32,7 +32,8 @@ class Base:
         self.parse_cpus = kwargs.get("parse_cpus", cpu_count() - 1)
         # Store in the db or not
         self.db = kwargs.get("db", False)
-
+        # Debug info
+        self.debug = kwargs.get("debug", False)
         assert hasattr(self, "run"), "Needs a run function"
 
     def parse_mp(self, func, args: list, desc=None, parse_cpus=None):

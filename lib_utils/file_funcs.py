@@ -45,7 +45,7 @@ def delete_files(paths: List[Path]):
 
 
 @retry(Exception, tries=2, msg="Failed download")
-def download_file(url: str, path: str, timeout=60, verify=False, err=False):
+def download_file(url: str, path: Path, timeout=60, verify=False, err=False):
     """Downloads a file from a url into a path."""
 
     # https://stackoverflow.com/a/39217788/8903959
@@ -56,7 +56,7 @@ def download_file(url: str, path: str, timeout=60, verify=False, err=False):
     with requests.get(url, stream=True, verify=verify, timeout=timeout) as r:
         if r.status_code == 200:
             # open the file and copy to it
-            with open(path, 'wb') as f:
+            with path.open(mode='wb') as f:
                 shutil.copyfileobj(r.raw, f)
         else:
             logging.warning(f"{url} returned {r.status_code}")

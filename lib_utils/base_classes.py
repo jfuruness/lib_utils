@@ -21,7 +21,8 @@ class Base:
                             self.__class__.__name__,
                             datetime.now().strftime("%Y.%m.%d.%H.%M.%S"))
         self._dir = Path(_dir)
-        self._dir.mkdir(parents=True)
+        self._dir.mkdir(parents=True,
+                        exist_ok=kwargs.get("_dir_exist_ok", False))
 
         # Path to output file
         self.tsv_path = self._dir / f"{self.__class__.__name__}.tsv"

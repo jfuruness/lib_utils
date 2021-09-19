@@ -104,6 +104,7 @@ You can test the package if in development by moving/cd into the directory where
 
 ## History
 * [lib\_utils](#lib_utils)
+* 0.2.01 Minor bug fixes. Added a _dir_exist_ok kwarg to Base class
 * 0.2.0 Moved over to Path from pathlib. Removed useless functions. Added more tests. Added more functions. Added Base class
 * 0.1.7 Added more unit tests, fixed multiprocess logging
 * 0.1.6 Added get_tags, added

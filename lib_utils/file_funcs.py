@@ -1,23 +1,19 @@
 """Contains useful functions relating to files"""
 
-from contextlib import contextmanager
 import csv
-from datetime import datetime
 import functools
 import logging
-import os
 from pathlib import Path
 import shutil
-import subprocess
+from typing import List
 
 import requests
-
 
 from .helper_funcs import run_cmds, retry
 
 
 # This decorator deletes paths before and after func is called
-def delete_files(paths: list[Path]):
+def delete_files(paths: List[Path]):
     """This decorator deletes files before and after a function.
     This is very useful for installation procedures.
     """
@@ -34,6 +30,7 @@ def delete_files(paths: list[Path]):
             return stuff
         return function_that_runs_func
     return my_decorator
+
 
 @retry(Exception, tries=2, msg="Failed download")
 def download_file(url: str, path: str, timeout=60, verify=False, err=False):
@@ -55,7 +52,7 @@ def download_file(url: str, path: str, timeout=60, verify=False, err=False):
                 r.raise_for_status()
 
 
-def delete_paths(paths: list[Path]):
+def delete_paths(paths: List[Path]):
     """Removes directory if directory, or removes path if path"""
 
     assert isinstance(paths, list), "delete_paths needs a list of Path objects"
@@ -72,7 +69,7 @@ def delete_paths(paths: list[Path]):
                     run_cmds(f"sudo rm -rf {str(path)}")
 
 
-def clean_paths(paths: list[Path]):
+def clean_paths(paths: List[Path]):
     """If path exists remove it, else create it"""
 
     # delete_paths verifies the typing
@@ -81,7 +78,7 @@ def clean_paths(paths: list[Path]):
         path.mkdir(parents=True)
 
 
-def write_dicts_to_tsv(list_of_dicts: list[dict], path: Path):
+def write_dicts_to_tsv(list_of_dicts: List[dict], path: Path):
     """Writes a list of dicts to TSV
 
     Note - column ordering = column ordering in the first dict

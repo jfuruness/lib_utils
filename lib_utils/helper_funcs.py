@@ -15,6 +15,7 @@ from tqdm import tqdm
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+
 def retry(err, tries=5, msg="", fail_func=lambda: time.sleep(.1)):
     """This decorator retries a func with the added fail func"""
 
@@ -54,7 +55,6 @@ def Pool(cpus=cpu_count()) -> ProcessingPool:
 def mp_call(func, args: list, desc: str, cpus=cpu_count()):
     """Makes a multiprocess call to a function with a progress bar"""
 
-    
     with Pool(cpus=cpus) as p:
         # Imap is an ordered map that returns an iterator
         list(tqdm(p.imap(func, *args), total=len(args[0]), desc=desc))
@@ -77,6 +77,7 @@ def run_cmds(cmds: list, timeout=None, stdout=False):
     logging.debug(f"Running: {cmd}")
     check_call(cmd, **kwargs)
 
+
 def get_tags(url: str, tag: str, timeout=30, verify=False) -> list:
     """Gets the html of given url and returns a list of tags"""
 
@@ -90,7 +91,8 @@ def get_tags(url: str, tag: str, timeout=30, verify=False) -> list:
 
     return tags
 
-def get_hrefs(url: str, tag="a", timeout=30, verify=False) -> list[str]:
+
+def get_hrefs(url: str, tag="a", timeout=30, verify=False) -> list:
     """Returns all hrefs that have an a tag at a given url"""
 
     hrefs = []

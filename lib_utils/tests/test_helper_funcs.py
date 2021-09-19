@@ -1,5 +1,4 @@
 import logging
-import os
 from subprocess import TimeoutExpired
 
 import pytest
@@ -41,13 +40,13 @@ class TestHelperFuncs:
                                                    [logging.DEBUG, None],
                                                    [logging.DEBUG, True],
                                                    [logging.DEBUG, False]])
-    def test_run_cmds(self, log_level, timeout, tmpdir):
+    def test_run_cmds(self, log_level, timeout, tmp_path):
         """Tests the run cmds function with all possible inputs"""
 
         print_funcs.config_logging(level=log_level, section="test")
-        path = tmpdir / "run_cmds_test.txt"
-        file_funcs.delete_paths(path)
-        for cmd in [f"sleep 2 && echo 'test' > {path}",
+        path = tmp_path / "run_cmds_test.txt"
+        file_funcs.delete_paths([path])
+        for cmd in [[f"sleep 2 && echo 'test' > {path}"],
                     ["sleep 2", f"echo 'test' > {path}"]]:
             # Timeout should be exceeded
             if timeout is True:

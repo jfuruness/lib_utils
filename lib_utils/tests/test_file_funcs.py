@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import pytest
@@ -10,13 +9,13 @@ from .. import file_funcs
 class TestFileFuncs:
     """Tests all funcs in file_funcs"""
 
-    def test_delete_files(self, tmpdir: Path):
+    def test_delete_files(self, tmp_path: Path):
         """Tests the delete files decorator
 
         Files should be removed both at the start and end of the func
         """
 
-        file_path = tmpdir / "delete_files_test.txt"
+        file_path = tmp_path / "delete_files_test.txt"
 
         @file_funcs.delete_files([file_path])
         def func():
@@ -36,15 +35,15 @@ class TestFileFuncs:
                                        ["test_dir"],
                                        ["test_dir_2",
                                         "test_dir_3"]])
-    def test_delete_paths(self, paths: list, tmpdir: Path):
+    def test_delete_paths(self, paths: list, tmp_path: Path):
         """Tests that files are deleted properly"""
 
-        paths = [tmpdir / x for x in paths]
+        paths = [tmp_path / x for x in paths]
 
         # for each path
         for path in paths:
             # If it's a file
-            if ".txt" in path:
+            if path.suffix == ".txt":
                 with path.open(mode="w+") as f:
                     f.write("test")
             # If it's a dir
@@ -74,13 +73,16 @@ class TestFileFuncs:
 
         pass
 
-    def test_clean_paths(self, tmpdir: Path):
+    def test_clean_paths(self, tmp_path: Path):
         """Ensures clean_paths removes and recreates dirs"""
 
         # Directories
-        dir_paths = [tmpdir / "test1", tmpdir / "test2" / "test3"]
+        dir_paths = [tmp_path / "test1", tmp_path / "test2" / "test3"]
         # Files that exist within those directories
-        file_paths = [x / "test.txt" for x in paths]
+        file_paths = [x / "test.txt" for x in dir_paths]
+
+        for path in dir_paths:
+            path.mkdir(parents=True)
 
         # Write a temporary file that should get removed
         for path in file_paths:
@@ -88,7 +90,7 @@ class TestFileFuncs:
                 f.write("test")
             assert path.exists()
 
-        clean_paths(dir_paths)
+        file_funcs.clean_paths(dir_paths)
 
         # Make sure directories still exist
         for path in dir_paths:

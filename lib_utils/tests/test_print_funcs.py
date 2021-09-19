@@ -16,7 +16,7 @@ class TestPrintFuncs:
         path = print_funcs.config_logging(section=section)
         log_str = "logging test"
         logging.error(log_str)
-        
+
         with open(path, "r") as f:
             lines = f.read()
             assert log_str in lines

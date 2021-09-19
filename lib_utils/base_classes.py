@@ -3,8 +3,8 @@
 from datetime import datetime, timedelta
 from multiprocessing import cpu_count
 import os
+from pathlib import Path
 
-from .file_funcs import makedirs
 from .helper_funcs import mp_call
 
 

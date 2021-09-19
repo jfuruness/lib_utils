@@ -1,17 +1,13 @@
 """Contains useful functions relating to printing"""
 
 from datetime import datetime
-import functools
 import logging
-import os
 from pathlib import Path
-import sys
 
 import multiprocessing_logging
 
-from .file_funcs import makedirs
-
 logging_set = False
+
 
 def config_logging(level=logging.INFO, section="main", mp=False) -> Path:
     """Configures logging to log to a file and screen
@@ -56,5 +52,5 @@ def _get_log_path(section: str) -> Path:
     log_dir = f"/var/log/{section}/"
 
     path = Path(log_dir)
-    path.mkdir(parents=True)
+    path.mkdir(parents=True, exist_ok=True)
     return path / fname

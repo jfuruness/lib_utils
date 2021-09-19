@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import pytest
 
@@ -9,56 +10,93 @@ from .. import file_funcs
 class TestFileFuncs:
     """Tests all funcs in file_funcs"""
 
-    def test_delete_files(self):
+    def test_delete_files(self, tmpdir: Path):
         """Tests the delete files decorator
 
         Files should be removed both at the start and end of the func
         """
 
-        file_path = "/tmp/delete_files_test.txt"
+        file_path = tmpdir / "delete_files_test.txt"
 
-        @file_funcs.delete_files(files=[file_path])
+        @file_funcs.delete_files([file_path])
         def func():
-            assert not os.path.exists(file_path)
-            with open(file_path, "w+") as f:
+            assert not file_path.exists()
+            with file_path.open(mode="w+") as f:
                 f.write("test")
 
-        with open(file_path, "w+") as f:
+        with file_path.open(mode="w+") as f:
             f.write("test")
 
         func()
-        assert not os.path.exists(file_path)
+        assert not file_path.exists()
 
-    @pytest.mark.skip
-    def test_makedirs(self):
-        pass
-
-    @pytest.mark.parametrize("paths", [["/tmp/test_file_utils.txt",
-                                        "/tmp/test_file_utils2.txt"],
-                                       "/tmp/test_file_utils3.txt",
-                                       "/tmp/test_dir",
-                                       ["/tmp/test_dir_2",
-                                        "/tmp/test_dir_3"]])
-    def test_delete_paths(self, paths):
+    @pytest.mark.parametrize("paths", [["test_file_utils.txt",
+                                        "test_file_utils2.txt"],
+                                       ["test_file_utils3.txt"],
+                                       ["test_dir"],
+                                       ["test_dir_2",
+                                        "test_dir_3"]])
+    def test_delete_paths(self, paths: list, tmpdir: Path):
         """Tests that files are deleted properly"""
 
-        # Create files or dirs
-        if not isinstance(paths, list):
-            _temp_paths = [paths]
-        else:
-            _temp_paths = paths
+        paths = [tmpdir / x for x in paths]
 
         # for each path
-        for path in _temp_paths:
+        for path in paths:
             # If it's a file
             if ".txt" in path:
-                with open(path, "w+") as f:
+                with path.open(mode="w+") as f:
                     f.write("test")
             # If it's a dir
             else:
-                os.makedirs(path)
+                path.mkdir()
 
         file_funcs.delete_paths(paths)
 
-        for path in _temp_paths:
-            assert not os.path.exists(path)
+        for path in paths:
+            assert not path.exists()
+
+    @pytest.mark.skip(reason="New hires work")
+    def test_delete_paths_asserts(self):
+        """Tests that assert statements correct typing"""
+
+        pass
+
+    @pytest.mark.skip(reason="New hires work")
+    def test_delete_paths_sudo(self):
+        """Tests that sudo rm -rf is called when needed"""
+
+        pass
+
+    @pytest.mark.skip(reason="New hires work")
+    def test_delete_paths_not_exists(self):
+        """Ensures delete_paths succeeds with nonexistant paths"""
+
+        pass
+
+    def test_clean_paths(self, tmpdir: Path):
+        """Ensures clean_paths removes and recreates dirs"""
+
+        # Directories
+        dir_paths = [tmpdir / "test1", tmpdir / "test2" / "test3"]
+        # Files that exist within those directories
+        file_paths = [x / "test.txt" for x in paths]
+
+        # Write a temporary file that should get removed
+        for path in file_paths:
+            with path.open(mode="w+") as f:
+                f.write("test")
+            assert path.exists()
+
+        clean_paths(dir_paths)
+
+        # Make sure directories still exist
+        for path in dir_paths:
+            assert path.exists()
+        # Make sure directories are empty
+        for path in file_paths:
+            assert not path.exists()
+
+    @pytest.mark.skip(reason="New hires")
+    def test_write_dicts_to_tsv(self):
+        pass

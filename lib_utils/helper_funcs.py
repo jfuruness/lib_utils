@@ -38,7 +38,7 @@ def retry(err, tries=5, msg="", fail_func=lambda: time.sleep(.1)):
 
 
 @contextmanager
-def Pool(cpus=cpu_count()):
+def Pool(cpus=cpu_count()) -> ProcessingPool:
     """Context manager for pathos ProcessingPool"""
 
     # Creates a pool with processes
@@ -51,7 +51,7 @@ def Pool(cpus=cpu_count()):
     p.clear()
 
 
-def mp_call(func, args, desc, cpus=cpu_count()):
+def mp_call(func, args: list, desc: str, cpus=cpu_count()):
     """Makes a multiprocess call to a function with a progress bar"""
 
     
@@ -60,9 +60,11 @@ def mp_call(func, args, desc, cpus=cpu_count()):
         list(tqdm(p.imap(func, *args), total=len(args[0]), desc=desc))
 
 
-def run_cmds(cmds, timeout=None, stdout=False):
+def run_cmds(cmds: list, timeout=None, stdout=False):
 
-    cmd = " && ".join(cmds) if isinstance(cmds, list) else cmds
+    assert isinstance(cmds, list)
+
+    cmd = " && ".join(cmds)
 
     kwargs = {"shell": True}
 
@@ -75,7 +77,7 @@ def run_cmds(cmds, timeout=None, stdout=False):
     logging.debug(f"Running: {cmd}")
     check_call(cmd, **kwargs)
 
-def get_tags(url: str, tag: str, timeout=30, verify=False):
+def get_tags(url: str, tag: str, timeout=30, verify=False) -> list:
     """Gets the html of given url and returns a list of tags"""
 
     # Verify verifies the SSL. Most website I scrape from have outdated certs
@@ -88,7 +90,7 @@ def get_tags(url: str, tag: str, timeout=30, verify=False):
 
     return tags
 
-def get_hrefs(url: str, tag="a", timeout=30, verify=False):
+def get_hrefs(url: str, tag="a", timeout=30, verify=False) -> list[str]:
     """Returns all hrefs that have an a tag at a given url"""
 
     hrefs = []

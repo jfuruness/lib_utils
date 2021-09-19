@@ -17,14 +17,14 @@ class Base:
         # Gets default download time if not otherwise set
         self.dl_time = kwargs.get("dl_time", self._default_dl_time())
         # Sets directory to download files to and write parsed files
-        self._dir = os.path.join(kwargs.get("_dir", "/tmp/"),
-                                 self.__class__.__name__,
-                                 self.dl_time.strftime("%Y.%m.%d.%H.%M.%S"))
-        # Make self._dir
-        makedirs(self._dir)#, remake=True)
+        _dir = os.path.join(kwargs.get("_dir", "/tmp/"),
+                            self.__class__.__name__,
+                            datetime.now().strftime("%Y.%m.%d.%H.%M.%S"))
+        self._dir = Path(_dir)
+        self._dir.mkdir(parents=True)
+
         # Path to output file
-        self.tsv_path = os.path.join(self._dir,
-                                     f"{self.__class__.__name__}.tsv")
+        self.tsv_path = self._dir / f"{self.__class__.__name__}.tsv"
         # CPUs for downloading files (I/O bound)
         self.dl_cpus = kwargs.get("dl_cpus", cpu_count() * 4)
         # CPUs for processing.
@@ -73,4 +73,3 @@ class Base:
         # 7 days because sometimes caida takes a while to upload
         dl_time = datetime.utcnow() - timedelta(days=7)
         return dl_time.replace(hour=0, minute=0, second=0, microsecond=0)
-

@@ -4,6 +4,7 @@ from datetime import datetime
 import functools
 import logging
 import os
+from pathlib import Path
 import sys
 
 import multiprocessing_logging
@@ -12,7 +13,7 @@ from .file_funcs import makedirs
 
 logging_set = False
 
-def config_logging(level=logging.INFO, section="main", mp=False):
+def config_logging(level=logging.INFO, section="main", mp=False) -> Path:
     """Configures logging to log to a file and screen
 
     mp stands for multiprocessing, didn't want to override that package
@@ -48,34 +49,12 @@ def config_logging(level=logging.INFO, section="main", mp=False):
         return path
 
 
-def _get_log_path(section):
+def _get_log_path(section: str) -> Path:
     """Returns path to log file"""
 
     fname = f"{section}_{datetime.now().strftime('%Y_%m_%d_%M_%S.%f')}.log"
     log_dir = f"/var/log/{section}/"
 
-    makedirs(log_dir)
-
-    return os.path.join(log_dir, fname)
-
-
-def write_to_stdout(msg: str):
-    sys.stdout.write(f"{msg}\n")
-    sys.stdout.flush()
-
-
-# This decorator prints exception upon err
-def print_err(err, msg="{}"):
-    """This decorator deletes files before and after a function.
-    This is very useful for installation procedures.
-    """
-    def my_decorator(func):
-        @functools.wraps(func)
-        def function_that_runs_func(*args, **kwargs):
-            try:
-                # Run the function
-                return func(*args, **kwargs)
-            except err as e:
-                logging.error(msg.format(e))
-        return function_that_runs_func
-    return my_decorator
+    path = Path(log_dir)
+    path.mkdir(parents=True)
+    return path / fname

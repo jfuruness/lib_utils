@@ -9,6 +9,10 @@ from .. import file_funcs
 class TestFileFuncs:
     """Tests all funcs in file_funcs"""
 
+    @pytest.mark.skip(reason="New hire work")
+    def test_temp_path(self):
+        pass
+
     def test_delete_files(self, tmp_path: Path):
         """Tests the delete files decorator
 

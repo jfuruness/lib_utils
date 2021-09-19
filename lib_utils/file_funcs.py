@@ -1,5 +1,6 @@
 """Contains useful functions relating to files"""
 
+from contextlib import contextmanager
 import csv
 import functools
 import logging
@@ -10,6 +11,17 @@ from typing import List
 import requests
 
 from .helper_funcs import run_cmds, retry
+
+
+@contextmanager
+def temp_path(path_str=None, path_append=None):
+    if path_str is None:
+        path_str = f"/tmp/{datetime.now()}".replace(" ", "_")
+    if path_append:
+        path_str += path_append
+    delete_paths([Path(path_str)])
+    yield Path(path_str)
+    delete_paths([Path(path_str)])
 
 
 # This decorator deletes paths before and after func is called

@@ -25,6 +25,7 @@ This package contains helper functions. Originally [this](https://github.com/jfu
 
 Functions:
 * file functions:
+    * temp_path: (context manager) returns a temporary path that will be deleted
     * delete_files: (decorator) deletes a list of files or dirs before and after func
     * download_file: downloads a file, tries twice
     * delete_paths: deletes paths

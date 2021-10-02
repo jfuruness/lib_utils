@@ -23,7 +23,7 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python :: 3'],
-    python_requires=">=3.8",
+    python_requires=">=3.7",
     entry_points={},
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],

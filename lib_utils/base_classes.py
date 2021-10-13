@@ -18,8 +18,8 @@ class Base:
         self.dl_time = kwargs.get("dl_time", self._default_dl_time())
         # Sets directory to download files to and write parsed files
         _dir = os.path.join(kwargs.get("_dir", "/tmp/"),
-                            self.__class__.__name__,
-                            datetime.now().strftime("%Y.%m.%d.%H.%M.%S"))
+                            datetime.now().strftime("%Y.%m.%d.%H.%M.%S"),
+                            self.__class__.__name__)
         self._dir = Path(_dir)
         self._dir.mkdir(parents=True,
                         exist_ok=kwargs.get("_dir_exist_ok", False))

@@ -17,9 +17,8 @@ class Base:
         # Gets default download time if not otherwise set
         self.dl_time = kwargs.get("dl_time", self._default_dl_time())
         # Sets directory to download files to and write parsed files
-        _dir = os.path.join(kwargs.get("_dir", "/tmp/"),
-                            datetime.now().strftime("%Y.%m.%d.%H.%M.%S"),
-                            self.__class__.__name__)
+        self.base_dir = Path(kwargs.get("_dir", "/tmp/")) / datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f")
+        _dir = self.base_dir / self.__class__.__name__
         self._dir = Path(_dir)
         self._dir.mkdir(parents=True,
                         exist_ok=kwargs.get("_dir_exist_ok", False))
@@ -30,7 +29,7 @@ class Base:
         self.dl_cpus = kwargs.get("dl_cpus", cpu_count() * 4)
         # CPUs for processing.
         # Some funcs go haywire if you use every core. cores-1 seems fine
-        self.parse_cpus = kwargs.get("parse_cpus", cpu_count() - 1)
+        self.parse_cpus = kwargs.get("parse_cpus", cpu_count())
         # Store in the db or not
         self.db = kwargs.get("db", False)
         # Debug info

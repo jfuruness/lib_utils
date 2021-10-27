@@ -1,6 +1,7 @@
 """Contains useful functions relating to printing"""
 
 from datetime import datetime
+import functools
 import logging
 from pathlib import Path
 
@@ -54,3 +55,20 @@ def _get_log_path(section: str) -> Path:
     path = Path(log_dir)
     path.mkdir(parents=True, exist_ok=True)
     return path / fname
+
+# Used in lib_browser
+# This decorator prints exception upon err
+def print_err(err, msg="{}"):
+    """This decorator deletes files before and after a function.
+    This is very useful for installation procedures.
+    """
+    def my_decorator(func):
+        @functools.wraps(func)
+        def function_that_runs_func(*args, **kwargs):
+            try:
+                # Run the function
+                return func(*args, **kwargs)
+            except err as e:
+                logging.error(msg.format(e))
+        return function_that_runs_func
+    return my_decorator

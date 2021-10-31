@@ -16,25 +16,35 @@ class Base:
         self.kwargs = kwargs
         # Gets default download time if not otherwise set
         self.dl_time = kwargs.get("dl_time", self._default_dl_time())
-        # Sets directory to download files to and write parsed files
-        self.base_dir = Path(kwargs.get("_dir", "/tmp/")) / datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f")
-        _dir = self.base_dir / self.__class__.__name__
-        self._dir = Path(_dir)
-        self._dir.mkdir(parents=True,
-                        exist_ok=kwargs.get("_dir_exist_ok", False))
+
+        t_str = datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f")
+        uid = f"{t_str}_{os.getpid()}"
+        name = self.__class__.__name__
+
+        self.base_dir = kwargs.get("base_dir", kwargs.get("dir_", Path("/tmp/")))
+        self.dir_ = kwargs.get("dir_", self.base_dir / f"{name}.{uid}")
+
+        self.dir_.mkdir(parents=True,
+                        exist_ok=kwargs.get("dir_exist_ok", False))
 
         # Path to output file
-        self.tsv_path = self._dir / f"{self.__class__.__name__}.tsv"
+        self.tsv_path = self.dir_ / f"{name}.tsv"
         # CPUs for downloading files (I/O bound)
         self.dl_cpus = kwargs.get("dl_cpus", cpu_count() * 4)
         # CPUs for processing.
         # Some funcs go haywire if you use every core. cores-1 seems fine
-        self.parse_cpus = kwargs.get("parse_cpus", cpu_count())
+        # In particular holds true for MRT parser
+        self.parse_cpus = kwargs.get("parse_cpus", cpu_count() - 1)
         # Store in the db or not
         self.db = kwargs.get("db", False)
         # Debug info
         self.debug = kwargs.get("debug", False)
         assert hasattr(self, "run"), "Needs a run function"
+
+    def timed_run(self):
+        start = datetime.now()
+        self.run()
+        print((datetime.now() - start).total_seconds())
 
     def parse_mp(self, func, args: list, desc=None, parse_cpus=None):
         """Calls a parsing function using multiprocessing

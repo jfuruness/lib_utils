@@ -24,8 +24,10 @@ class Base:
         self.base_dir = kwargs.get("base_dir", kwargs.get("dir_", Path("/tmp/")))
         self.dir_ = kwargs.get("dir_", self.base_dir / f"{name}.{uid}")
 
+        self.dir_exist_ok= kwargs.get("dir_exist_ok", False)
+
         self.dir_.mkdir(parents=True,
-                        exist_ok=kwargs.get("dir_exist_ok", False))
+                        exist_ok=self.dir_exist_ok)
 
         # Path to output file
         self.tsv_path = self.dir_ / f"{name}.tsv"

@@ -90,7 +90,7 @@ def clean_paths(paths: List[Path]):
         path.mkdir(parents=True)
 
 
-def write_dicts_to_tsv(list_of_dicts: List[dict], path: Path):
+def write_dicts_to_tsv(list_of_dicts: List[dict], path: Path, cols=None):
     """Writes a list of dicts to TSV
 
     Note - column ordering = column ordering in the first dict
@@ -98,7 +98,9 @@ def write_dicts_to_tsv(list_of_dicts: List[dict], path: Path):
 
     logging.debug(f"Writing rows to {path}")
     with path.open(mode="w+") as f:
-        cols = list(list_of_dicts[0].keys())
+        if cols is None:
+            cols = list(list_of_dicts[0].keys())
         writer = csv.DictWriter(f, fieldnames=cols, delimiter="\t")
         writer.writeheader()
-        writer.writerows(list_of_dicts)
+        if len(list_of_dicts) > 0:
+            writer.writerows(list_of_dicts)

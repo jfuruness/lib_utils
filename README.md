@@ -49,7 +49,6 @@ from lib_utils import file_funcs, helper_funcs, print_funcs
 helper_funcs.run_cmds("ls", stdout=True)
 ```
 
-There are very few helper functions, and I don't want to take the time to document them extensively. Just view the source code, the functions are well documented there. I know that is not great practice, but most likely I am the only one who will use this repo.
 
 ## Installation
 * [lib\_utils](#lib_utils)
@@ -69,17 +68,16 @@ sudo chown -R $USER:$USER /var/log/test
 Install python3 and pip if you have not already. Then run:
 
 ```bash
-pip3 install wheel
-pip3 install lib_utils
+pip3 install git+ssh://git@github.com/jfuruness/lib_utils.git
 ```
 This will install the package and all of it's python dependencies.
 
 If you want to install the project for development:
 
 ```bash
-git clone https://github.com/jfuruness/lib_utils.git
+git clone git@github.com:jfuruness/lib_utils.git
 cd lib_utils
-python3 setup.py develop
+pip3 install -e .[test]
 ```
 
 To test the development package: [Testing](#testing)
@@ -88,19 +86,24 @@ To test the development package: [Testing](#testing)
 ## Testing
 * [lib\_utils](#lib_utils)
 
-You can test the package if in development by moving/cd into the directory where setup.py is located and running:
+You can test the package if in development by moving/cd into the directory where setup.py is located and running pytest
 (Note that you must have all dependencies installed first)
-```python3 setup.py test```
+
+You can also run tox if you have the associated python installations, and it will attempt to run tox
+
 
 ## Development/Contributing
 * [lib\_utils](#lib_utils)
 
 1. Fork it!
 2. Create your feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -am 'Add some feature'`
-4. Push to the branch: `git push origin my-new-feature`
-5. Submit a pull request
-6. Email me at jfuruness@gmail.com because idk how to even check those messages
+3. Implement your new feature
+4. Run tests
+5. Change the version number and update the changelog
+6. Commit your changes: `git commit -am 'Add some feature'`
+7. Push to the branch: `git push origin my-new-feature`
+8. Submit a pull request
+9. Email me at jfuruness@gmail.com
 
 ## History
 * [lib\_utils](#lib_utils)
@@ -127,5 +130,3 @@ BSD License (see license file)
 * [lib\_utils](#lib_utils)
 
 Better unit tests. Oof.
-
-

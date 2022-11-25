@@ -16,12 +16,12 @@ class TestPrintFuncs:
         path = print_funcs.config_logging(section=section)
         log_str = "logging test"
         logging.error(log_str)
-        
+
         with open(path, "r") as f:
             lines = f.read()
             assert log_str in lines
 
-    @pytest.mark.skip
+    @pytest.mark.skip(reason="New hires")
     def test_config_logging_duplication(self):
         """Tests calling config_logging twice
 
@@ -33,7 +33,7 @@ class TestPrintFuncs:
 
         raise NotImplementedError
 
-    @pytest.mark.skip
+    @pytest.mark.skip(reason="New hires")
     def test_config_logging_levels(self):
         """Tests the setting of all log levels"""
 

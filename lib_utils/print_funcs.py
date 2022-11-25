@@ -3,16 +3,14 @@
 from datetime import datetime
 import functools
 import logging
-import os
-import sys
+from pathlib import Path
 
 import multiprocessing_logging
 
-from .file_funcs import makedirs
-
 logging_set = False
 
-def config_logging(level=logging.INFO, section="main", mp=False):
+
+def config_logging(level=logging.INFO, section="main", mp=False) -> Path:
     """Configures logging to log to a file and screen
 
     mp stands for multiprocessing, didn't want to override that package
@@ -48,23 +46,17 @@ def config_logging(level=logging.INFO, section="main", mp=False):
         return path
 
 
-def _get_log_path(section):
+def _get_log_path(section: str) -> Path:
     """Returns path to log file"""
 
     fname = f"{section}_{datetime.now().strftime('%Y_%m_%d_%M_%S.%f')}.log"
     log_dir = f"/var/log/{section}/"
 
-    makedirs(log_dir)
+    path = Path(log_dir)
+    path.mkdir(parents=True, exist_ok=True)
+    return path / fname
 
-    return os.path.join(log_dir, fname)
-
-
-def write_to_stdout(msg: str):
-    logging.warning("There are no unit tests for this function")
-    sys.stdout.write(f"{msg}\n")
-    sys.stdout.flush()
-
-
+# Used in lib_browser
 # This decorator prints exception upon err
 def print_err(err, msg="{}"):
     """This decorator deletes files before and after a function.
@@ -74,7 +66,6 @@ def print_err(err, msg="{}"):
         @functools.wraps(func)
         def function_that_runs_func(*args, **kwargs):
             try:
-                logging.warning("There are no unit tests for this utils func")
                 # Run the function
                 return func(*args, **kwargs)
             except err as e:

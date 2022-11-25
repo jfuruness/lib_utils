@@ -1,7 +1,12 @@
 beautifulsoup4==4.10.0
 multiprocessing_logging==0.3.1
 pathos==0.2.8
+pytest==6.2.5
 requests==2.26.0
 setuptools>=52.0.0
 tqdm==4.62.3
 urllib3==1.26.5
+pytest-cov
+mypy
+flake8
+tox

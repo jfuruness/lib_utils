@@ -10,6 +10,11 @@ import time
 from bs4 import BeautifulSoup as Soup
 from pathos.multiprocessing import ProcessingPool
 import requests
+from tqdm import tqdm
+
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 def retry(err, tries=5, msg="", fail_func=lambda: time.sleep(.1)):
     """This decorator retries a func with the added fail func"""
@@ -22,7 +27,6 @@ def retry(err, tries=5, msg="", fail_func=lambda: time.sleep(.1)):
             # Number of tries
             for _ in range(tries):
                 try:
-                    logging.warning("No unit tests for this")
                     # Run the function
                     return func(*args, **kwargs)
                 except err as exc:
@@ -36,12 +40,11 @@ def retry(err, tries=5, msg="", fail_func=lambda: time.sleep(.1)):
 
 
 @contextmanager
-def Pool(threads=None, multiplier=1):
+def Pool(cpus=cpu_count()) -> ProcessingPool:
     """Context manager for pathos ProcessingPool"""
 
-    logging.warning("There are no unit tests for this function")
-    # Creates a pool with threads else cpu_count * multiplier
-    p = ProcessingPool(threads if threads else cpu_count() * multiplier)
+    # Creates a pool with processes
+    p = ProcessingPool(cpus)
     yield p
     # Need to clear due to:
     # https://github.com/uqfoundation/pathos/issues/111
@@ -50,9 +53,19 @@ def Pool(threads=None, multiplier=1):
     p.clear()
 
 
-def run_cmds(cmds, timeout=None, stdout=False):
+def mp_call(func, args: list, desc: str, cpus=cpu_count()):
+    """Makes a multiprocess call to a function with a progress bar"""
 
-    cmd = " && ".join(cmds) if isinstance(cmds, list) else cmds
+    with Pool(cpus=cpus) as p:
+        # Imap is an ordered map that returns an iterator
+        list(tqdm(p.imap(func, *args), total=len(args[0]), desc=desc))
+
+
+def run_cmds(cmds: list, timeout=None, stdout=False):
+
+    assert isinstance(cmds, list)
+
+    cmd = " && ".join(cmds)
 
     kwargs = {"shell": True}
 
@@ -65,11 +78,12 @@ def run_cmds(cmds, timeout=None, stdout=False):
     logging.debug(f"Running: {cmd}")
     check_call(cmd, **kwargs)
 
-def get_tags(url: str, tag: str, timeout=30):
+
+def get_tags(url: str, tag: str, timeout=30, verify=False) -> list:
     """Gets the html of given url and returns a list of tags"""
 
-    logging.warning("There are no unit tests for this utils func")
-    response = requests.get(url, timeout=timeout)
+    # Verify verifies the SSL. Most website I scrape from have outdated certs
+    response = requests.get(url, timeout=timeout, verify=verify)
     # Raises an exception if there was an error
     response.raise_for_status()
     # Get all tags within the beautiful soup from the html and return them
@@ -77,3 +91,14 @@ def get_tags(url: str, tag: str, timeout=30):
     response.close()
 
     return tags
+
+
+def get_hrefs(url: str, tag="a", timeout=30, verify=False) -> list:
+    """Returns all hrefs that have an a tag at a given url"""
+
+    hrefs = []
+    for x in get_tags(url, tag, timeout=timeout, verify=verify):
+        # Get doesn't work normally
+        if x.get("href") is not None:
+            hrefs.append(x["href"])
+    return hrefs

@@ -27,6 +27,7 @@ def retry(err, tries=5, msg="", fail_func=lambda: time.sleep(.1)):
                     return func(*args, **kwargs)
                 except err as exc:
                     fail_func()
+                    logging.warning("Ran fail func")
                     e = exc
             logging.error(msg)
             raise e
